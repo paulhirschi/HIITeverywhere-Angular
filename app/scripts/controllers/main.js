@@ -5,7 +5,8 @@
  * @name hiitAngularApp.controller:MainCtrl
  * @description
  * # MainCtrl
- * Controller of the hiitAngularApp
+ * Controller of the hiitAngularApp.
+ * All views are controlled by 'MainCtrl'
  */
 angular.module('hiitAngularApp')
   .controller('MainCtrl', ['$scope', '$log', 'appService',
@@ -106,11 +107,12 @@ angular.module('hiitAngularApp')
       $scope.insaneDuration = 60;
 
       /**
-       * This function is created to randomly shuffle an array.
-       * I use it to shuffle the currentWorkout so the exercises
+       * This function is created to randomly shuffle items within an array.
+       * I use it to shuffle the currentWorkout array so the exercises
        * appear in a random order each use.
        * It is called the Fisher-Yates (aka Knuth) Shuffle,
-       * probably named after its creators. Its super handy.
+       * probably named after its creators.
+       * Not necessary, but its handy.
        */
 
       function shuffle(array) {
@@ -169,6 +171,23 @@ angular.module('hiitAngularApp')
       // to randomize it's order.
       $scope.currentWorkout = shuffle(appService.currentWorkout);
       $scope.workoutDuration = appService.workoutDuration;
+
+
+      /**
+       * TODO:
+       * 1. Initialize loop to iterate over the currentWorkout array, displaying a single workout at a time.
+       * 2. Initialize the countdown timer and set to workoutDuration
+       * 3. Set callbacks for when the clock starts and stops to show/hide content, iterate through the currentWorkout array, etc.
+       * 4.
+       */
+
+
+
+
+
+
+
+
 
       // Function used in stop callback to reset the clock, toggle the button, iterate through and show next workout, and show the rest message. Also calls message when workout complete.
       // var i = 1;
