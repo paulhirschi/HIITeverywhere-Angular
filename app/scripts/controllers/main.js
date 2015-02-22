@@ -8,18 +8,31 @@
  * Controller of the hiitAngularApp
  */
 angular.module('hiitAngularApp')
-  .controller('MainCtrl', ['$scope', '$log',
+  .controller('MainCtrl', ['$scope', '$log', 'appService',
 
-    function($scope, $log) {
+    function($scope, $log, appService) {
 
+      // This is the bell that 'dings' when a workout is complete.
       var bell = new Audio('audio/bell.mp3');
 
+      // Here I initiate the bell to pre-load it to function
+      // properly on mobile safari, etc. Audio must be
+      // initiated by a user event in mobile safari.  This
+      // pre-loading allows me to use it in a call-back function.
       $scope.alertText = function() {
         bell.volume = 0;
         bell.play();
         $log.log('App Started');
       };
 
+      /**
+       * Following are the arrays containing the workouts and
+       * time durations for the workout. After user selections,
+       * a workout and workout duration will be stored in variables
+       * to be used in the workout view.
+       */
+
+      // Body section variables
       $scope.upperWorkouts = [
         'Pushups',
         'Wide-Arm Pushups',
@@ -86,15 +99,76 @@ angular.module('hiitAngularApp')
         'Dive Bomber Pushups'
       ];
 
-
-
-      //***
-      // Workout Duration Varibles
-      //***
+      // Workout duration variables.
       $scope.beginnerDuration = 20;
       $scope.averageDuration = 30;
       $scope.proDuration = 40;
       $scope.insaneDuration = 60;
+
+      /**
+       * This function is created to randomly shuffle an array.
+       * I use it to shuffle the currentWorkout so the exercises
+       * appear in a random order each use.
+       * It is called the Fisher-Yates (aka Knuth) Shuffle,
+       * probably named after its creators. Its super handy.
+       */
+
+      function shuffle(array) {
+        var currentIndex = array.length,
+          temporaryValue, randomIndex;
+
+        // While there remain elements to shuffle...
+        while (0 !== currentIndex) {
+
+          // Pick a remaining element...
+          randomIndex = Math.floor(Math.random() * currentIndex);
+          currentIndex -= 1;
+
+          // And swap it with the current element.
+          temporaryValue = array[currentIndex];
+          array[currentIndex] = array[randomIndex];
+          array[randomIndex] = temporaryValue;
+        }
+        return array;
+      }
+
+      /**
+       * This is where I retrieve the workouts & workout duration
+       * from the user via ng-click calling the functions below.
+       * The data is permanently stored in the [appService]
+       * service from the service.js file.
+       */
+
+      // ng-click calls this function and passes the workout from
+      // the clicked body section.
+      // These values are then permanently stored in the
+      // in service.js
+      $scope.getCurrentWorkout = function(workout) {
+        appService.theWorkout(workout);
+      };
+
+      // ng-click calls this function and passes the duration from
+      // the clicked intensity level.
+      // These values are then permanently stored in the
+      // in service.js
+      $scope.getWorkoutDuration = function(duration) {
+        appService.theDuration(duration);
+      };
+
+      $scope.$watch('currentWorkout', function(newVal, oldVal) {
+        $log.log('New currentWorkout value is ' + newVal);
+      });
+
+      $scope.$watch('workoutDuration', function(newVal, oldVal) {
+        $log.log('Workout duration is ' + newVal);
+      });
+
+      // The values stored in the service are set to the
+      // $scope variables for workout and duration used in the views.
+      // The workout is passed through the shuffle function
+      // to randomize it's order.
+      $scope.currentWorkout = shuffle(appService.currentWorkout);
+      $scope.workoutDuration = appService.workoutDuration;
 
       // Function used in stop callback to reset the clock, toggle the button, iterate through and show next workout, and show the rest message. Also calls message when workout complete.
       // var i = 1;
@@ -132,52 +206,6 @@ angular.module('hiitAngularApp')
       //   });
       // };
 
-      //***
-      // This function is created to randomly shuffle an array.  I use it to shuffle the currentWorkout so the exercises appear in a random order.  It is called the Fisher-Yates (aka Knuth) Shuffle, probably named after its creators. Its super handy.
-      //***
-      // function shuffle(array) {
-      //   var currentIndex = array.length,
-      //     temporaryValue, randomIndex;
-
-      //   // While there remain elements to shuffle...
-      //   while (0 !== currentIndex) {
-
-      //     // Pick a remaining element...
-      //     randomIndex = Math.floor(Math.random() * currentIndex);
-      //     currentIndex -= 1;
-
-      //     // And swap it with the current element.
-      //     temporaryValue = array[currentIndex];
-      //     array[currentIndex] = array[randomIndex];
-      //     array[randomIndex] = temporaryValue;
-      //   }
-      //   return array;
-      // }
-
-      //***
-      // Set the currentWorkouts variable to the user choice. Then dynamically load next page so varaible is maintained.
-      //***
-
-
-
-      $scope.currentWorkout = function(currentWorkout) {
-
-        $scope.currentWorkout = currentWorkout;
-        $log.log($scope.currentWorkout);
-
-        return currentWorkout;
-
-      };
-
-
-      //***
-      // Set the workoutDuration variable to the user choice. Then dynamically load next page so varaible is maintained and call workClock() to start the workout timer and shuffle the currentWorkout randomly.
-      //***
-
-      // $scope.intensityLevelSelect = function(workoutDuration) {
-      //   $scope.workoutDuration = workoutDuration;
-      //   $log.log($scope.workoutDuration);
-      // };
 
     }
   ]);

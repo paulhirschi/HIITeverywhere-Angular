@@ -6,15 +6,14 @@
  * @description
  * # hiitAngularApp
  *
- * Main module of the application.
+ * Main module of the application, including routes.
  */
-angular
-  .module('hiitAngularApp', [
-    'ngAnimate',
-    'ngResource',
-    'ngRoute',
-    'ngTouch'
-  ])
+angular.module('hiitAngularApp', [
+  'ngAnimate',
+  'ngResource',
+  'ngRoute',
+  'ngTouch'
+])
   .config(function($routeProvider) {
     $routeProvider
       .when('/', {
